@@ -8,17 +8,17 @@
     "start": "next start"
   },
   "dependencies": {
-    "next": "14.2.35",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "@tobyg74/tiktok-api-dl": "^1.3.7",
-    "instagram-url-direct": "^2.0.7",
-    "fb-downloader-scrapper": "^3.0.1",
-    "axios": "^1.7.9"
+    "next": "14.2.15",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "@tobyg74/tiktok-api-dl": "latest",
+    "instagram-url-direct": "latest",
+    "fb-downloader-scrapper": "latest",
+    "axios": "latest"
   },
   "devDependencies": {
-    "autoprefixer": "^10.4.20",
-    "postcss": "^8.4.49",
-    "tailwindcss": "^3.4.17"
+    "autoprefixer": "10.4.20",
+    "postcss": "8.4.49",
+    "tailwindcss": "3.4.17"
   }
 }
