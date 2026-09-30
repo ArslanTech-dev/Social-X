@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARSLAN TECH'S Downloader - All In One Video Downloader</title>
+    <meta name="description" content="Download videos from TikTok, Instagram, and Facebook in HD quality without watermark. Fast, free, and no login required by ARSLAN TECH'S.">
+    <meta name="keywords" content="video downloader, tiktok downloader, instagram downloader, facebook downloader, no watermark, ARSLAN TECH'S">
+    <meta name="author" content="Arslan">
+    <meta name="theme-color" content="#0A84FF">
+    
+    <meta property="og:title" content="ARSLAN TECH'S Downloader - All In One Video Downloader">
+    <meta property="og:description" content="Download Anything, Anytime - By ARSLAN TECH'S.">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="ARSLAN TECH'S">
+
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%230A84FF%22/><text x=%2250%22 y=%2250%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22system-ui%22 font-weight=%22900%22 font-size=%2250%22>AT</text></svg>">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: { primary: '#0A84FF' },
+                    animation: { 'fade-in-up': 'fadeInUp 0.6s ease-out forwards' },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .dark .glass-panel {
+            background: rgba(20, 20, 20, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        details > summary { list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #0A84FF 0%, #00C6FF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #1f2937;
+            color: white;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 9999;
+            max-width: 90vw;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+        .toast.error { background: #dc2626; }
+        .toast.success { background: #16a34a; }
+
+        .spinner {
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-black text-gray-900 dark:text-gray-100 transition-colors duration-300 min-h-screen flex flex-col">
+
+    <div id="toast" class="toast"></div>
+
+    <!-- Header -->
+    <header class="fixed w-full top-0 z-50 glass-panel border-b border-gray-200 dark:border-gray-800">
+        <div class="container mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/30">
+                    <span class="text-white font-black text-xl tracking-tighter">AT</span>
+                </div>
+                <span class="font-bold text-xl tracking-tight hidden sm:block">ARSLAN TECH'S</span>
+            </div>
+            
+            <button id="themeToggle" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors" aria-label="Toggle Dark Mode">
+                <svg id="sunIcon" class="w-6 h-6 hidden dark:block text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <svg id="moonIcon" class="w-6 h-6 block dark:hidden text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main -->
+    <main class="flex-grow pt-24 pb-12">
+        
+        <!-- Hero -->
+        <section class="container mx-auto px-4 py-12 lg:py-20 text-center">
+            <div class="max-w-4xl mx-auto animate-fade-in-up">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary dark:bg-primary/20 text-sm font-semibold mb-6 border border-primary/20">
+                    <span class="relative flex h-2 w-2">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                    </span>
+                    Download Anything, Anytime - By ARSLAN TECH'S
+                </div>
+                
+                <h1 class="text-4xl md:text-6xl font-black tracking-tight mb-6 leading-tight">
+                    ARSLAN TECH'S Downloader <br>
+                    <span class="gradient-text">All In One Video Downloader</span>
+                </h1>
+                
+                <p class="text-lg text-gray-600 dark:text-gray-400 mb-10 max-w-2xl mx-auto">
+                    Download videos from TikTok, Instagram, and Facebook in HD quality — free, fast, and no watermark.
+                </p>
+
+                <!-- Input Box -->
+                <div class="max-w-3xl mx-auto relative group">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-primary to-cyan-400 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
+                    <div class="relative flex flex-col sm:flex-row gap-3 bg-white dark:bg-gray-900 p-3 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-800">
+                        <div class="flex-grow relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                            </div>
+                            <input type="url" id="videoUrl" placeholder="Paste video link here..." 
+                                class="w-full pl-12 pr-4 py-4 bg-transparent border-none rounded-xl focus:ring-2 focus:ring-primary/50 text-gray-900 dark:text-white placeholder-gray-400 outline-none text-lg"
+                                oninput="detectPlatform(this.value)">
+                        </div>
+                        <button onclick="pasteFromClipboard()" class="px-6 py-4 rounded-xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 font-semibold transition-colors flex items-center justify-center gap-2 whitespace-nowrap">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                            Paste
+                        </button>
+                        <button id="mainDownloadBtn" onclick="processDownload()" class="px-8 py-4 rounded-xl bg-primary hover:bg-blue-600 text-white font-bold text-lg shadow-lg shadow-primary/30 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2 whitespace-nowrap disabled:opacity-60 disabled:cursor-not-allowed">
+                            <svg id="btnIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            <span id="mainDownloadText">Download</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Platform Badge -->
+                <div id="platformBadge" class="mt-4 h-8 flex items-center justify-center gap-2 opacity-0 transition-opacity duration-300">
+                    <span class="text-sm text-gray-500 dark:text-gray-400">Detected:</span>
+                    <span id="platformName" class="px-3 py-1 rounded-full bg-gray-200 dark:bg-gray-800 text-sm font-semibold flex items-center gap-2"></span>
+                </div>
+
+                <!-- Supported Platforms -->
+                <div class="mt-12 flex flex-wrap justify-center items-center gap-6 md:gap-10 opacity-70 grayscale hover:grayscale-0 transition-all duration-500">
+                    <div class="flex flex-col items-center gap-2">
+                        <svg class="w-8 h-8" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
+                        <span class="text-xs font-medium">TikTok</span>
+                    </div>
+                    <div class="flex flex-col items-center gap-2">
+                        <svg class="w-8 h-8 text-pink-600" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                        <span class="text-xs font-medium">Instagram</span>
+                    </div>
+                    <div class="flex flex-col items-center gap-2">
+                        <svg class="w-8 h-8 text-blue-600" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                        <span class="text-xs font-medium">Facebook</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Loading -->
+        <div id="loadingState" class="hidden container mx-auto px-4 py-8 text-center">
+            <div class="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
+                <div class="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                <span class="font-medium text-gray-700 dark:text-gray-300">Fetching video information...</span>
+            </div>
+        </div>
+
+        <!-- Result -->
+        <section id="resultSection" class="hidden container mx-auto px-4 py-8">
+            <div class="max-w-4xl mx-auto bg-white dark:bg-gray-900 rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-800 overflow-hidden animate-fade-in-up">
+                <div class="grid md:grid-cols-5">
+                    <div class="md:col-span-2 relative bg-gray-100 dark:bg-gray-800 min-h-[250px]">
+                        <img id="videoThumb" src="" alt="Video Thumbnail" class="w-full h-full object-cover absolute inset-0" onerror="this.style.display='none'">
+                        <div class="absolute bottom-3 right-3 bg-black/80 text-white text-xs font-bold px-2 py-1 rounded-md backdrop-blur-sm" id="videoDuration">00:00</div>
+                    </div>
+                    
+                    <div class="md:col-span-3 p-6 md:p-8 flex flex-col justify-center">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span id="resultPlatformBadge" class="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider">Platform</span>
+                        </div>
+                        <h3 id="videoTitle" class="text-xl font-bold mb-6 line-clamp-2 text-gray-900 dark:text-white">Video Title</h3>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <button id="hdDownloadBtn" class="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-primary hover:bg-blue-600 text-white font-semibold transition-all shadow-lg shadow-primary/20">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                Download HD
+                            </button>
+                            
+                            <button id="sdDownloadBtn" class="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-900 dark:text-white font-semibold transition-all border border-gray-200 dark:border-gray-700">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                Download SD
+                            </button>
+
+                            <button id="noWatermarkBtn" class="hidden sm:col-span-2 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-semibold transition-all shadow-lg shadow-pink-500/20">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
+                                Download Without Watermark
+                            </button>
+                        </div>
+
+                        <button onclick="resetApp()" class="mt-4 text-sm text-gray-500 hover:text-primary transition-colors underline self-start">
+                            Download another video
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="container mx-auto px-4 py-20">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Why Choose ARSLAN TECH'S?</h2>
+                <p class="text-gray-600 dark:text-gray-400">The ultimate tool for your daily downloading needs</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 hover:border-primary/50 transition-all hover:-translate-y-1">
+                    <div class="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-900/30 text-primary flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Lightning Fast</h3>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm">Optimized servers ensure your downloads start instantly.</p>
+                </div>
+
+                <div class="p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 hover:border-primary/50 transition-all hover:-translate-y-1">
+                    <div class="w-12 h-12 rounded-xl bg-green-100 dark:bg-green-900/30 text-green-600 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">100% Free</h3>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm">No hidden fees, no premium tiers. Always free.</p>
+                </div>
+
+                <div class="p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 hover:border-primary/50 transition-all hover:-translate-y-1">
+                    <div class="w-12 h-12 rounded-xl bg-purple-100 dark:bg-purple-900/30 text-purple-600 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">No Login Required</h3>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm">Your privacy matters. No account needed.</p>
+                </div>
+
+                <div class="p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 hover:border-primary/50 transition-all hover:-translate-y-1">
+                    <div class="w-12 h-12 rounded-xl bg-orange-100 dark:bg-orange-900/30 text-orange-600 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">HD Quality</h3>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm">Download in the highest available resolution.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- How to Use -->
+        <section class="container mx-auto px-4 py-20 bg-gray-100 dark:bg-gray-900/50 rounded-3xl my-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">How to Use</h2>
+                <p class="text-gray-600 dark:text-gray-400">Download in 3 simple steps</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <div class="text-center">
+                    <div class="w-16 h-16 mx-auto bg-primary text-white rounded-2xl flex items-center justify-center text-2xl font-black mb-4 shadow-lg shadow-primary/30">1</div>
+                    <h3 class="text-xl font-bold mb-2">Copy Link</h3>
+                    <p class="text-gray-600 dark:text-gray-400">Copy the video link from TikTok, Instagram or Facebook.</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 mx-auto bg-primary text-white rounded-2xl flex items-center justify-center text-2xl font-black mb-4 shadow-lg shadow-primary/30">2</div>
+                    <h3 class="text-xl font-bold mb-2">Paste Link</h3>
+                    <p class="text-gray-600 dark:text-gray-400">Paste the link above and click Download.</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 mx-auto bg-primary text-white rounded-2xl flex items-center justify-center text-2xl font-black mb-4 shadow-lg shadow-primary/30">3</div>
+                    <h3 class="text-xl font-bold mb-2">Download</h3>
+                    <p class="text-gray-600 dark:text-gray-400">Choose HD, SD, or No Watermark. Save to device.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ -->
+        <section class="container mx-auto px-4 py-20 max-w-3xl">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Frequently Asked Questions</h2>
+            </div>
+            
+            <div class="space-y-4">
+                <details class="group bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden">
+                    <summary class="flex items-center justify-between p-6 cursor-pointer font-semibold text-lg">
+                        <span>Is this service really free?</span>
+                        <svg class="w-5 h-5 text-gray-500 group-open:rotate-180 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </summary>
+                    <div class="px-6 pb-6 text-gray-600 dark:text-gray-400">Yes, ARSLAN TECH'S is completely free. No hidden fees, no premium tiers.</div>
+                </details>
+
+                <details class="group bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden">
+                    <summary class="flex items-center justify-between p-6 cursor-pointer font-semibold text-lg">
+                        <span>Can I download videos without a watermark?</span>
+                        <svg class="w-5 h-5 text-gray-500 group-open:rotate-180 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </summary>
+                    <div class="px-6 pb-6 text-gray-600 dark:text-gray-400">Yes! For TikTok videos, we offer a dedicated "Download Without Watermark" option.</div>
+                </details>
+
+                <details class="group bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden">
+                    <summary class="flex items-center justify-between p-6 cursor-pointer font-semibold text-lg">
+                        <span>Is it safe to use?</span>
+                        <svg class="w-5 h-5 text-gray-500 group-open:rotate-180 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </summary>
+                    <div class="px-6 pb-6 text-gray-600 dark:text-gray-400">We do not require any login, and we do not store any videos or your history.</div>
+                </details>
+
+                <details class="group bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden">
+                    <summary class="flex items-center justify-between p-6 cursor-pointer font-semibold text-lg">
+                        <span>Which platforms are supported?</span>
+                        <svg class="w-5 h-5 text-gray-500 group-open:rotate-180 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </summary>
+                    <div class="px-6 pb-6 text-gray-600 dark:text-gray-400">We currently support TikTok, Instagram, and Facebook. More platforms coming soon.</div>
+                </details>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 py-12">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                        <span class="text-white font-black text-sm">AT</span>
+                    </div>
+                    <div>
+                        <p class="font-bold text-gray-900 dark:text-white">ARSLAN TECH'S</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Download Anything, Anytime</p>
+                    </div>
+                </div>
+                
+                <div class="text-center md:text-right">
+                    <p class="text-sm font-semibold text-gray-900 dark:text-white">© 2026 ARSLAN TECH'S</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Made with ❤️ by Arslan</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ==================== JAVASCRIPT ==================== -->
+    <script>
+        /* ================================================================
+           CONFIG — YAHAN APNA API URL DAALO
+           ================================================================
+           Do Options:
+           
+           OPTION A: Apna Backend Use Karo
+           --------------------------------
+           Agar aapne alag Node.js backend banaya hai (Render, Railway, Koyeb par),
+           to us endpoint ka URL yahan daalo:
+           
+           const API_ENDPOINT = "https://your-backend.onrender.com/api/download";
+           
+           OPTION B: Free Public API Use Karo (Demo)
+           -----------------------------------------
+           Neeche kuch free public APIs hain jo TikTok/Insta ke liye kaam karti hain.
+           Ye reliable nahi hain, sirf demo ke liye hain:
+           
+           TikTok: https://www.tikwm.com/api/?url=<VIDEO_URL>
+           Instagram: Koi public free API reliable nahi hai
+           Facebook: Koi public free API reliable nahi hai
+           ================================================================ */
+        
+        // CHANGE THIS — apna backend URL yahan daalo
+        const API_ENDPOINT = ""; // Khali chhodo agar sirf public APIs use karni hain
+
+        /* ---------- Dark Mode ---------- */
+        const themeToggle = document.getElementById('themeToggle');
+        const html = document.documentElement;
+
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+        } else {
+            html.classList.remove('dark');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            localStorage.theme = html.classList.contains('dark') ? 'dark' : 'light';
+        });
+
+        /* ---------- Toast ---------- */
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast show ' + (type === 'error' ? 'error' : type === 'success' ? 'success' : '');
+            setTimeout(() => toast.classList.remove('show'), 3500);
+        }
+
+        /* ---------- Platform Detection ---------- */
+        const SUPPORTED_PLATFORMS = {
+            'tiktok.com': { name: 'TikTok', color: 'text-pink-500', bg: 'bg-pink-100 dark:bg-pink-900/30' },
+            'vt.tiktok': { name: 'TikTok', color: 'text-pink-500', bg: 'bg-pink-100 dark:bg-pink-900/30' },
+            'vm.tiktok': { name: 'TikTok', color: 'text-pink-500', bg: 'bg-pink-100 dark:bg-pink-900/30' },
+            'instagram.com': { name: 'Instagram', color: 'text-purple-500', bg: 'bg-purple-100 dark:bg-purple-900/30' },
+            'instagr.am': { name: 'Instagram', color: 'text-purple-500', bg: 'bg-purple-100 dark:bg-purple-900/30' },
+            'facebook.com': { name: 'Facebook', color: 'text-blue-600', bg: 'bg-blue-100 dark:bg-blue-900/30' },
+            'fb.watch': { name: 'Facebook', color: 'text-blue-600', bg: 'bg-blue-100 dark:bg-blue-900/30' },
+            'fb.com': { name: 'Facebook', color: 'text-blue-600', bg: 'bg-blue-100 dark:bg-blue-900/30' },
+        };
+
+        function detectPlatform(url) {
+            const badge = document.getElementById('platformBadge');
+            const nameSpan = document.getElementById('platformName');
+            
+            if (!url || url.length < 5) {
+                badge.classList.add('opacity-0');
+                return null;
+            }
+
+            const u = url.toLowerCase();
+            for (const [domain, info] of Object.entries(SUPPORTED_PLATFORMS)) {
+                if (u.includes(domain)) {
+                    nameSpan.textContent = info.name;
+                    nameSpan.className = `px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-2 ${info.color} ${info.bg}`;
+                    badge.classList.remove('opacity-0');
+                    return { name: info.name, key: domain.split('.')[0] };
+                }
+            }
+            badge.classList.add('opacity-0');
+            return null;
+        }
+
+        /* ---------- Paste ---------- */
+        async function pasteFromClipboard() {
+            try {
+                const text = await navigator.clipboard.readText();
+                document.getElementById('videoUrl').value = text;
+                detectPlatform(text);
+            } catch (err) {
+                showToast('Clipboard permission denied. Manually paste karo.', 'error');
+            }
+        }
+
+        /* ---------- Download Trigger ---------- */
+        function triggerDownload(url, filename) {
+            if (!url) {
+                showToast('Download URL available nahi hai', 'error');
+                return;
+            }
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename || 'video.mp4';
+            a.target = '_blank';
+            a.rel = 'noopener noreferrer';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            showToast('Download shuru ho gaya!', 'success');
+        }
+
+        /* ================================================================
+           TIKTOK via TikWM (Free Public API — no key needed)
+           ================================================================ */
+        async function fetchTikTok(videoUrl) {
+            const apiUrl = `https://www.tikwm.com/api/?url=${encodeURIComponent(videoUrl)}&hd=1`;
+            const res = await fetch(apiUrl);
+            const json = await res.json();
+
+            if (json.code !== 0 || !json.data) {
+                throw new Error(json.msg || 'TikTok video nahi mili');
+            }
+
+            const d = json.data;
+            return {
+                success: true,
+                platform: 'tiktok',
+                platformName: 'TikTok',
+                title: d.title || 'TikTok Video',
+                thumbnail: d.cover || d.origin_cover || null,
+                duration: d.duration ? `${Math.floor(d.duration / 60)}:${String(d.duration % 60).padStart(2, '0')}` : '00:15',
+                videoUrl: d.hdplay || d.play,       // HD ya normal
+                sdUrl: d.play,                       // SD
+                noWatermarkUrl: d.hdplay || d.play,  // TikTok API returns without watermark
+                hasWatermarkOption: true,
+            };
+        }
+
+        /* ================================================================
+           MAIN PROCESS
+           ================================================================ */
+        let currentResult = null;
+
+        async function processDownload() {
+            const url = document.getElementById('videoUrl').value.trim();
+            const mainBtn = document.getElementById('mainDownloadBtn');
+            const btnText = document.getElementById('mainDownloadText');
+            const btnIcon = document.getElementById('btnIcon');
+
+            if (!url) {
+                showToast('Pehle video link paste karo', 'error');
+                return;
+            }
+
+            const platform = detectPlatform(url);
+            if (!platform) {
+                showToast('Sirf TikTok, Instagram ya Facebook support hai', 'error');
+                return;
+            }
+
+            // Loading
+            mainBtn.disabled = true;
+            btnText.textContent = 'Loading...';
+            btnIcon.outerHTML = '<div class="spinner"></div>';
+            document.getElementById('loadingState').classList.remove('hidden');
+            document.getElementById('resultSection').classList.add('hidden');
+            document.getElementById('loadingState').scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            try {
+                let data;
+
+                if (API_ENDPOINT) {
+                    // Apna backend use karo
+                    const res = await fetch(API_ENDPOINT, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ url }),
+                    });
+                    data = await res.json();
+                    if (!res.ok || !data.success) throw new Error(data.message || 'Video fetch nahi ho saki');
+                } else {
+                    // Public APIs use karo
+                    if (platform.name === 'TikTok') {
+                        data = await fetchTikTok(url);
+                    } else if (platform.name === 'Instagram') {
+                        throw new Error('Instagram ke liye backend chahiye. Neeche instructions dekho.');
+                    } else if (platform.name === 'Facebook') {
+                        throw new Error('Facebook ke liye backend chahiye. Neeche instructions dekho.');
+                    }
+                }
+
+                currentResult = data;
+
+                // UI Update
+                document.getElementById('videoTitle').textContent = data.title || 'Video';
+                document.getElementById('videoDuration').textContent = data.duration || '00:00';
+                document.getElementById('resultPlatformBadge').textContent = data.platformName;
+
+                const thumb = document.getElementById('videoThumb');
+                if (data.thumbnail) {
+                    thumb.src = data.thumbnail;
+                    thumb.style.display = 'block';
+                } else {
+                    thumb.style.display = 'none';
+                }
+
+                const nwBtn = document.getElementById('noWatermarkBtn');
+                if (data.hasWatermarkOption && data.noWatermarkUrl) {
+                    nwBtn.classList.remove('hidden');
+                } else {
+                    nwBtn.classList.add('hidden');
+                }
+
+                document.getElementById('loadingState').classList.add('hidden');
+                const resultSection = document.getElementById('resultSection');
+                resultSection.classList.remove('hidden');
+                resultSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                showToast('Video mil gayi!', 'success');
+
+            } catch (err) {
+                console.error('Download error:', err);
+                document.getElementById('loadingState').classList.add('hidden');
+                showToast(err.message || 'Kuch galat ho gaya', 'error');
+            } finally {
+                mainBtn.disabled = false;
+                btnText.textContent = 'Download';
+                btnIcon.outerHTML = '<svg id="btnIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>';
+            }
+        }
+
+        /* ---------- Download Button Handlers ---------- */
+        document.getElementById('hdDownloadBtn').addEventListener('click', () => {
+            if (!currentResult) return;
+            const fname = (currentResult.title || 'video').replace(/[^\w\s-]/g, '').slice(0, 50) + '_HD.mp4';
+            triggerDownload(currentResult.videoUrl, fname);
+        });
+
+        document.getElementById('sdDownloadBtn').addEventListener('click', () => {
+            if (!currentResult) return;
+            const url = currentResult.sdUrl || currentResult.videoUrl;
+            const fname = (currentResult.title || 'video').replace(/[^\w\s-]/g, '').slice(0, 50) + '_SD.mp4';
+            triggerDownload(url, fname);
+        });
+
+        document.getElementById('noWatermarkBtn').addEventListener('click', () => {
+            if (!currentResult || !currentResult.noWatermarkUrl) return;
+            const fname = (currentResult.title || 'video').replace(/[^\w\s-]/g, '').slice(0, 50) + '_NoWatermark.mp4';
+            triggerDownload(currentResult.noWatermarkUrl, fname);
+        });
+
+        function resetApp() {
+            currentResult = null;
+            document.getElementById('videoUrl').value = '';
+            document.getElementById('resultSection').classList.add('hidden');
+            document.getElementById('loadingState').classList.add('hidden');
+            document.getElementById('platformBadge').classList.add('opacity-0');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        document.getElementById('videoUrl').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') processDownload();
+        });
+    </script>
+</body>
+</html>
